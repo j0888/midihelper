@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MIDI-Helper</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext x='1' y='13' font-size='13'%3E%F0%9F%8E%9B%EF%B8%8F%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="app-header">
+      <h1>MIDI-Helper</h1>
+      <p class="subtitle">MIDI-Befehle berechnen &amp; für StageTraxx&nbsp;4 kopieren</p>
+    </header>
+
+    <nav id="device-tabs" class="segmented" aria-label="Gerät wählen"></nav>
+
+    <section class="card" id="patch-card">
+      <div class="card-head">
+        <h2>Patch umschalten</h2>
+        <label class="channel-field">
+          MIDI-Kanal
+          <input id="channel-input" type="number" min="1" max="16" inputmode="numeric">
+        </label>
+      </div>
+      <nav id="variant-tabs" class="segmented segmented-small" aria-label="Modus wählen"></nav>
+      <p id="patch-help" class="help" hidden></p>
+      <div id="patch-params" class="params"></div>
+      <div id="patch-output" class="output"></div>
+    </section>
+
+    <details class="card" id="extras-card">
+      <summary><h2>Weitere Funktionen</h2></summary>
+      <div class="field">
+        <label for="extra-select">Funktion</label>
+        <select id="extra-select"></select>
+      </div>
+      <p id="extra-help" class="help" hidden></p>
+      <div id="extra-params" class="params"></div>
+      <div id="extra-output" class="output"></div>
+    </details>
+
+    <footer class="app-footer">
+      <p>Ausgabe im Format der <a href="https://stagetraxx.com/docs/v4/midi/" target="_blank" rel="noopener">StageTraxx&nbsp;4 MIDI-Syntax</a>. Neue Geräte: siehe README.</p>
+    </footer>
+  </main>
+
+  <script src="js/registry.js"></script>
+  <script src="devices/kemper-profiler-stage.js"></script>
+  <script src="devices/ampero-ii-stomp.js"></script>
+  <script src="js/format.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
