@@ -46,15 +46,19 @@
     id: "kemper-profiler-stage",
     name: "Kemper Profiler Stage",
     defaultChannel: 1,
-    // Stilisiertes Floorboard: Display mittig, zwei Tasterreihen, Pedal rechts
+    // Stilisiertes Stage-Floorboard: Display links oben, Regler rechts daneben,
+    // zwei Reihen à 5 Fußtaster darunter, Expression-Pedal rechts in Draufsicht
     icon: '<svg viewBox="0 0 60 32" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
       '<rect x="2" y="4" width="44" height="24" rx="3"/>' +
-      '<rect x="17" y="8" width="14" height="7" rx="1"/>' +
-      '<circle cx="9" cy="12" r="2"/><circle cx="39" cy="12" r="2"/>' +
-      '<circle cx="9" cy="22" r="2"/><circle cx="19" cy="22" r="2"/>' +
-      '<circle cx="29" cy="22" r="2"/><circle cx="39" cy="22" r="2"/>' +
-      '<path d="M51 26 L58 22 L58 26 Z" fill="currentColor" stroke="none"/>' +
-      '<rect x="50" y="26" width="9" height="2" rx="1" fill="currentColor" stroke="none"/>' +
+      '<rect x="6" y="7" width="15" height="7" rx="1"/>' +
+      '<circle cx="28" cy="10.5" r="1.3" fill="currentColor" stroke="none"/>' +
+      '<circle cx="34" cy="10.5" r="1.3" fill="currentColor" stroke="none"/>' +
+      '<circle cx="40" cy="10.5" r="1.3" fill="currentColor" stroke="none"/>' +
+      '<circle cx="8" cy="18" r="2"/><circle cx="16" cy="18" r="2"/><circle cx="24" cy="18" r="2"/>' +
+      '<circle cx="32" cy="18" r="2"/><circle cx="40" cy="18" r="2"/>' +
+      '<circle cx="8" cy="24" r="2"/><circle cx="16" cy="24" r="2"/><circle cx="24" cy="24" r="2"/>' +
+      '<circle cx="32" cy="24" r="2"/><circle cx="40" cy="24" r="2"/>' +
+      '<rect x="50" y="7" width="8" height="18" rx="2.5"/>' +
       '</svg>',
     functions: [
       {
