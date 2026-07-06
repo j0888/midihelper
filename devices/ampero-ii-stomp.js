@@ -43,6 +43,13 @@
     id: "ampero-ii-stomp",
     name: "Ampero II Stomp",
     defaultChannel: 1,
+    // Stilisierte Kompakt-Box: Touchscreen oben, drei Fußschalter unten
+    icon: '<svg viewBox="0 0 60 32" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
+      '<rect x="12" y="2" width="36" height="28" rx="3"/>' +
+      '<rect x="17" y="6" width="18" height="11" rx="1"/>' +
+      '<circle cx="42" cy="9" r="2"/><circle cx="42" cy="15" r="1.2" fill="currentColor" stroke="none"/>' +
+      '<circle cx="19" cy="24" r="2.5"/><circle cx="30" cy="24" r="2.5"/><circle cx="41" cy="24" r="2.5"/>' +
+      '</svg>',
     functions: [
       {
         id: "patch-bank",

@@ -125,6 +125,13 @@ check(
   "Ampero Tempo 300 BPM"
 );
 
+// --- StageTraxx-Trigger-Varianten (Sendezeitpunkt) ---
+const triggerMessages = fn("kemper-profiler-stage", "patch-browser").build({ program: 7, bank: -1 }, 1);
+check(format.toStageTraxx(triggerMessages), "[midi: PC7@1]", "Trigger-Default = Laden");
+check(format.toStageTraxx(triggerMessages, "load"), "[midi: PC7@1]", "Trigger load");
+check(format.toStageTraxx(triggerMessages, "play"), "[midi@play: PC7@1]", "Trigger play");
+check(format.toStageTraxx(triggerMessages, "stop"), "[midi@stop: PC7@1]", "Trigger stop");
+
 // --- Klartext-Renderer ---
 const lines = format.toTextLines(
   fn("kemper-profiler-stage", "patch-performance").build({ performance: 5, slot: 1 }, 1)

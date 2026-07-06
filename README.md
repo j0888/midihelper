@@ -21,9 +21,13 @@ Reine statische Seite ohne Build und ohne Abhängigkeiten:
 
 1. Gerät oben auswählen, MIDI-Kanal einstellen (wird gemerkt).
 2. Patch-Umschaltung ausfüllen — die Ausgabe aktualisiert sich live.
-3. „Kopieren" legt die `[midi: …]`-Zeile in die Zwischenablage;
+3. „Senden bei" bestimmt den Zeitpunkt, zu dem StageTraxx die Befehle
+   schickt: **Laden** → `[midi: …]` (beim Laden des Songs),
+   **Play** → `[midi@play: …]` (beim Start der Wiedergabe),
+   **Stop** → `[midi@stop: …]` (beim Stoppen).
+4. „Kopieren" legt die gewählte Zeile in die Zwischenablage;
    sie kann direkt in den StageTraxx-Songtext eingefügt werden.
-4. Unter „Weitere Funktionen" stehen die übrigen MIDI-Steuerungen
+5. Unter „Weitere Funktionen" stehen die übrigen MIDI-Steuerungen
    des Geräts (Effekte, Tempo, Tuner …).
 
 ## Neues Gerät hinzufügen
@@ -70,6 +74,11 @@ Parameter-Typen: `number` (mit `min`/`max`/`default`) und `select`
 Klartext-Erklärung. Funktionen mit `primary: true` bilden die
 Modus-Umschalter im Patch-Bereich, alle übrigen landen unter
 „Weitere Funktionen".
+
+Optional kann die Gerätedefinition ein Feld `icon` enthalten: ein
+Inline-SVG-String (Strichzeichnung mit `stroke="currentColor"`), der
+im Auswahl-Button vor dem Namen angezeigt wird und die Buttonfarbe
+erbt. Ohne `icon` zeigt der Button nur den Namen.
 
 ## Tests
 

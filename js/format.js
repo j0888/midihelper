@@ -2,6 +2,9 @@
  * Wandelt abstrakte MIDI-Nachrichten (siehe registry.js) in die beiden
  * Ausgabeformate um:
  *   - toStageTraxx: [midi: ...]-Zeile nach https://stagetraxx.com/docs/v4/midi/
+ *     Der zweite Parameter wählt den Sendezeitpunkt: "load" -> [midi: ...]
+ *     (beim Laden des Songs), "play" -> [midi@play: ...] (beim Start der
+ *     Wiedergabe), "stop" -> [midi@stop: ...] (beim Stoppen).
  *   - toTextLines:  deutsche Klartext-Erklärung, eine Zeile pro Nachricht
  */
 (function () {
@@ -17,8 +20,11 @@
     return "CC" + msg.controller + "." + msg.value + "@" + msg.channel;
   }
 
-  function toStageTraxx(messages) {
-    return "[midi: " + messages.map(messageToStageTraxx).join(", ") + "]";
+  var TRIGGER_TAGS = { load: "midi", play: "midi@play", stop: "midi@stop" };
+
+  function toStageTraxx(messages, trigger) {
+    var tag = TRIGGER_TAGS[trigger] || TRIGGER_TAGS.load;
+    return "[" + tag + ": " + messages.map(messageToStageTraxx).join(", ") + "]";
   }
 
   function messageToText(msg) {

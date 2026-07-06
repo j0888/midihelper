@@ -87,6 +87,25 @@ body {
   font-size: 0.85rem;
 }
 
+/* Geräte-Buttons mit stilisiertem Icon */
+.device-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.device-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.device-icon svg {
+  width: 44px;
+  height: 26px;
+  display: block;
+}
+
 .card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -201,6 +220,23 @@ input.invalid { border-color: #dc2626; }
   font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   color: var(--text);
 }
+
+/* Umschalter für den Sendezeitpunkt (Laden/Play/Stop) */
+.trigger-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.trigger-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.trigger-row .segmented { flex: 0 0 auto; }
+
+.trigger-row .segmented button { flex: 0 0 auto; }
 
 .stagetraxx-row {
   display: flex;

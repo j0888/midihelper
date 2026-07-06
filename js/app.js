@@ -35,6 +35,23 @@
     return { deviceId: null, perDevice: {} };
   }
 
+  // Sendezeitpunkt der StageTraxx-Zeile (load/play/stop), global für alle Ausgaben
+  if (!state.trigger) state.trigger = "load";
+
+  var TRIGGERS = [
+    { id: "load", label: "Laden", title: "Wird gesendet, wenn der Song geladen wird" },
+    { id: "play", label: "Play", title: "Wird gesendet, wenn die Wiedergabe startet" },
+    { id: "stop", label: "Stop", title: "Wird gesendet, wenn die Wiedergabe stoppt" }
+  ];
+
+  // Aktive Ausgabe-Renderer, damit ein Trigger-Wechsel beide Karten aktualisiert
+  var updaters = { patch: null, extra: null };
+
+  function refreshOutputs() {
+    if (updaters.patch) updaters.patch();
+    if (updaters.extra) updaters.extra();
+  }
+
   function saveState() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -92,7 +109,16 @@
     devices.forEach(function (device) {
       var btn = document.createElement("button");
       btn.type = "button";
-      btn.textContent = device.name;
+      btn.className = "device-btn";
+      if (device.icon) {
+        var icon = document.createElement("span");
+        icon.className = "device-icon";
+        icon.innerHTML = device.icon; // eigene Mapping-Dateien, kein Fremdinhalt
+        btn.appendChild(icon);
+      }
+      var name = document.createElement("span");
+      name.textContent = device.name;
+      btn.appendChild(name);
       btn.setAttribute("aria-pressed", String(device === currentDevice()));
       btn.addEventListener("click", function () {
         state.deviceId = device.id;
@@ -219,7 +245,31 @@
     });
     container.appendChild(list);
 
-    var stagetraxx = format.toStageTraxx(messages);
+    var triggerRow = document.createElement("div");
+    triggerRow.className = "trigger-row";
+    var triggerLabel = document.createElement("span");
+    triggerLabel.className = "trigger-label";
+    triggerLabel.textContent = "Senden bei:";
+    triggerRow.appendChild(triggerLabel);
+    var triggerTabs = document.createElement("div");
+    triggerTabs.className = "segmented segmented-small";
+    TRIGGERS.forEach(function (trigger) {
+      var tbtn = document.createElement("button");
+      tbtn.type = "button";
+      tbtn.textContent = trigger.label;
+      tbtn.title = trigger.title;
+      tbtn.setAttribute("aria-pressed", String(state.trigger === trigger.id));
+      tbtn.addEventListener("click", function () {
+        state.trigger = trigger.id;
+        saveState();
+        refreshOutputs();
+      });
+      triggerTabs.appendChild(tbtn);
+    });
+    triggerRow.appendChild(triggerTabs);
+    container.appendChild(triggerRow);
+
+    var stagetraxx = format.toStageTraxx(messages, state.trigger);
     var row = document.createElement("div");
     row.className = "stagetraxx-row";
 
@@ -279,11 +329,13 @@
     if (!fn) {
       el.patchParams.innerHTML = "";
       el.patchOutput.innerHTML = "";
+      updaters.patch = null;
       return;
     }
     var update = function () {
       renderOutput(el.patchOutput, device, fn, paramsValid(el.patchParams));
     };
+    updaters.patch = update;
     renderParams(el.patchParams, device, fn, update);
     update();
   }
@@ -294,11 +346,13 @@
     if (!fn) {
       el.extraParams.innerHTML = "";
       el.extraOutput.innerHTML = "";
+      updaters.extra = null;
       return;
     }
     var update = function () {
       renderOutput(el.extraOutput, device, fn, paramsValid(el.extraParams));
     };
+    updaters.extra = update;
     renderParams(el.extraParams, device, fn, update);
     update();
   }
