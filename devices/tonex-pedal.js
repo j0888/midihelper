@@ -1,12 +1,12 @@
 /*
  * IK Multimedia ToneX Pedal
- * Quelle: TONEX Pedal User Manual (MIDI-Kapitel), per Websuche aus
- * Handbuch-Spiegeln und der MIDI-CC-Referenz voes.be/midi-cc
- * zusammengetragen (das Original-PDF war nicht direkt abrufbar).
+ * Quelle: TONEX Pedal User Manual, Kapitel "MIDI specifications"
+ * (S. 36–41): Preset-Nummerierung, MIDI Control Change Associations.
  *
- * Presets heißen 01A bis 50C (Bank 1–50, Slot A/B/C). Der globale Index
- * i = (Bank−1)·3 + Slot(0–2) liegt bei 0–149 und wird als Bank-Select
- * (CC#0, i div 128, Wert 0–1) plus Program Change (i mod 128) gesendet.
+ * Presets heißen 00A bis 49C (Bank 00–49, Slot A/B/C). Der globale Index
+ * i = Bank·3 + Slot(0–2) liegt bei 0–149 und wird als MIDI Patch Bank
+ * (CC#0, i div 128, Wert 0–1) plus Program Change (i mod 128) gesendet
+ * (laut Handbuch: 00A = PC 0; Bank 0 = 00A–42B, Bank 1 = 42C–49C).
  */
 (function () {
   "use strict";
@@ -14,7 +14,7 @@
   var SLOT_LETTERS = ["A", "B", "C"];
 
   function presetName(index) {
-    var bank = Math.floor(index / 3) + 1;
+    var bank = Math.floor(index / 3);
     return (bank < 10 ? "0" + bank : bank) + SLOT_LETTERS[index % 3];
   }
 
@@ -38,6 +38,27 @@
     { value: 107, label: "Depth" },
     { value: 15, label: "Gate Threshold" },
     { value: 19, label: "Comp Threshold" }
+  ];
+
+  var EFFECTS = [
+    { value: 2, label: "Delay" },
+    { value: 32, label: "Modulation" },
+    { value: 75, label: "Reverb" },
+    { value: 14, label: "Noise Gate" },
+    { value: 18, label: "Kompressor" }
+  ];
+
+  var MOD_TYPES = [
+    { value: 0, label: "Chorus" },
+    { value: 1, label: "Tremolo" },
+    { value: 2, label: "Phaser" },
+    { value: 3, label: "Flanger" },
+    { value: 4, label: "Rotary" }
+  ];
+
+  var DELAY_TYPES = [
+    { value: 0, label: "Digital" },
+    { value: 1, label: "Tape" }
   ];
 
   var REVERB_TYPES = [
@@ -77,7 +98,7 @@
         label: "Bank + Slot",
         primary: true,
         params: [
-          { id: "bank", label: "Bank (1–50)", type: "number", min: 1, max: 50, default: 1 },
+          { id: "bank", label: "Bank (0–49)", type: "number", min: 0, max: 49, default: 0 },
           {
             id: "slot", label: "Slot", type: "select", default: 0,
             options: [
@@ -88,14 +109,14 @@
           }
         ],
         build: function (p, ch) {
-          return presetMessages((p.bank - 1) * 3 + p.slot, ch);
+          return presetMessages(p.bank * 3 + p.slot, ch);
         }
       },
       {
         id: "preset-direct",
         label: "Preset-Nummer",
         primary: true,
-        help: "Fortlaufende Nummer 1–150: Nr. 1 = 01A, Nr. 4 = 02A usw.",
+        help: "Fortlaufende Nummer 1–150: Nr. 1 = 00A, Nr. 4 = 01A usw.",
         params: [
           { id: "number", label: "Preset-Nummer (1–150)", type: "number", min: 1, max: 150, default: 1 }
         ],
@@ -137,15 +158,11 @@
       },
       {
         id: "tuner",
-        label: "Tuner",
-        params: [
-          {
-            id: "state", label: "Zustand", type: "select", default: 127,
-            options: [{ value: 127, label: "An" }, { value: 0, label: "Aus" }]
-          }
-        ],
+        label: "Tuner umschalten",
+        params: [],
         build: function (p, ch) {
-          return [{ type: "CC", controller: 9, value: p.state, channel: ch, note: p.state ? "Tuner einschalten" : "Tuner ausschalten" }];
+          // Laut Handbuch ein Toggle: jeder Wert schaltet den Tuner um
+          return [{ type: "CC", controller: 9, value: 127, channel: ch, note: "Tuner an/aus umschalten" }];
         }
       },
       {
@@ -192,16 +209,46 @@
         }
       },
       {
-        id: "reverb",
-        label: "Reverb an/aus",
+        id: "effect-toggle",
+        label: "Effekt an/aus",
         params: [
+          { id: "effect", label: "Effekt", type: "select", options: EFFECTS, default: 75 },
           {
             id: "state", label: "Zustand", type: "select", default: 127,
             options: [{ value: 127, label: "An" }, { value: 0, label: "Aus" }]
           }
         ],
         build: function (p, ch) {
-          return [{ type: "CC", controller: 75, value: p.state, channel: ch, note: p.state ? "Reverb einschalten" : "Reverb ausschalten" }];
+          return [{
+            type: "CC", controller: p.effect, value: p.state, channel: ch,
+            note: optionLabel(EFFECTS, p.effect) + (p.state ? " einschalten" : " ausschalten")
+          }];
+        }
+      },
+      {
+        id: "delay-type",
+        label: "Delay-Typ",
+        params: [
+          { id: "delayType", label: "Typ", type: "select", options: DELAY_TYPES, default: 0 }
+        ],
+        build: function (p, ch) {
+          return [{
+            type: "CC", controller: 3, value: p.delayType, channel: ch,
+            note: "Delay-Typ " + optionLabel(DELAY_TYPES, p.delayType)
+          }];
+        }
+      },
+      {
+        id: "mod-type",
+        label: "Modulations-Typ",
+        params: [
+          { id: "modType", label: "Typ", type: "select", options: MOD_TYPES, default: 0 }
+        ],
+        build: function (p, ch) {
+          return [{
+            type: "CC", controller: 33, value: p.modType, channel: ch,
+            note: "Modulations-Typ " + optionLabel(MOD_TYPES, p.modType)
+          }];
         }
       },
       {
