@@ -12,6 +12,9 @@ Enthaltene Geräte:
 - **Hotone Ampero II Stomp** — Patch-Wechsel per Bank (0–99) + Patch (1–3)
   oder fortlaufender Nummer (1–300), dazu Scenes, Tempo/Tap, Tuner,
   Footswitches, Effekt-Slots u. a.
+- **IK Multimedia ToneX Pedal** — Preset-Wechsel per Bank (1–50) +
+  Slot (A/B/C) oder fortlaufender Nummer (1–150), dazu Bypass,
+  Preset-/Bank-Navigation, Tuner, Tap, Regler (Gain, EQ, Reverb …).
 
 ## Benutzung
 
@@ -94,4 +97,6 @@ Patch-Tabelle → CC0 + PC, Tempo-Split CC74/75).
 
 - KEMPER PROFILER MIDI Parameter Documentation 14.1 (S. 8–11, CC-Tabellen)
 - Hotone Ampero II Stomp MIDI Control Information List, Firmware V2.0.0
+- IK Multimedia TONEX Pedal User Manual (MIDI-Kapitel; zusammengetragen
+  über Handbuch-Spiegel und [voes.be/midi-cc](https://voes.be/midi-cc/ikmultimedia_tonex.html))
 - [StageTraxx 4 MIDI-Dokumentation](https://stagetraxx.com/docs/v4/midi/)

@@ -16,7 +16,8 @@ for (const file of [
   "js/registry.js",
   "js/format.js",
   "devices/kemper-profiler-stage.js",
-  "devices/ampero-ii-stomp.js"
+  "devices/ampero-ii-stomp.js",
+  "devices/tonex-pedal.js"
 ]) {
   (0, eval)(readFileSync(join(root, file), "utf8"));
 }
@@ -124,6 +125,49 @@ check(
   "[midi: CC74.2@1, CC75.44@1]",
   "Ampero Tempo 300 BPM"
 );
+
+// --- ToneX Pedal: Preset-Auswahl (CC0 Bank 0-1 + PC, 50 Bänke à A/B/C) ---
+check(
+  stagetraxx("tonex-pedal", "preset-bank", { bank: 1, slot: 0 }),
+  "[midi: CC0.0@1, PC0@1]",
+  "ToneX 01A (erstes Preset)"
+);
+check(
+  stagetraxx("tonex-pedal", "preset-bank", { bank: 43, slot: 1 }),
+  "[midi: CC0.0@1, PC127@1]",
+  "ToneX 43B (letztes Preset in Bank-MSB 0)"
+);
+check(
+  stagetraxx("tonex-pedal", "preset-bank", { bank: 43, slot: 2 }),
+  "[midi: CC0.1@1, PC0@1]",
+  "ToneX 43C (erstes Preset in Bank-MSB 1)"
+);
+check(
+  stagetraxx("tonex-pedal", "preset-bank", { bank: 50, slot: 2 }),
+  "[midi: CC0.1@1, PC21@1]",
+  "ToneX 50C (letztes Preset)"
+);
+check(
+  stagetraxx("tonex-pedal", "preset-direct", { number: 128 }),
+  "[midi: CC0.0@1, PC127@1]",
+  "ToneX Preset-Nummer 128 = 43B"
+);
+check(
+  stagetraxx("tonex-pedal", "preset-direct", { number: 150 }),
+  "[midi: CC0.1@1, PC21@1]",
+  "ToneX Preset-Nummer 150 = 50C"
+);
+// Bank+Slot und fortlaufende Nummer müssen dieselben Nachrichten liefern
+for (const n of [1, 64, 128, 129, 150]) {
+  const viaDirect = stagetraxx("tonex-pedal", "preset-direct", { number: n });
+  const viaBank = stagetraxx("tonex-pedal", "preset-bank", {
+    bank: Math.floor((n - 1) / 3) + 1,
+    slot: (n - 1) % 3
+  });
+  assert.equal(viaBank, viaDirect, "ToneX Konsistenz Preset " + n);
+  count++;
+}
+console.log("ok  ToneX: Bank+Slot und Preset-Nummer sind konsistent");
 
 // --- StageTraxx-Trigger-Varianten (Sendezeitpunkt) ---
 const triggerMessages = fn("kemper-profiler-stage", "patch-browser").build({ program: 7, bank: -1 }, 1);
